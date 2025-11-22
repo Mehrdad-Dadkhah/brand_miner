@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پرسشنامه استراتژی و تدوین برند</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4f46e5; 
+            border-radius: 4px;
+        }
+
+        /* Animations */
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .input-focus-effect:focus {
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5);
+            border-color: #6366f1;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-bar-glow {
+            box-shadow: 0 0 10px #6366f1, 0 0 20px #4f46e5;
+        }
+        
+        /* Helper for LTR text in RTL context */
+        .dir-ltr {
+            direction: ltr;
+            unicode-bidi: embed;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
+
+    <!-- Background Elements -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+        <div class="absolute top-[-10%] right-[-10%] w-96 h-96 bg-indigo-900 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+        <div class="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-purple-900 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="w-full max-w-3xl glass-panel rounded-2xl shadow-2xl overflow-hidden flex flex-col relative" style="min-height: 600px;">
+        
+        <!-- Header / Progress -->
+        <div class="bg-slate-900/50 p-6 border-b border-white/5 sticky top-0 z-20">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-xs font-bold text-indigo-400 tracking-wider uppercase">مسیر طراحی برند</span>
+                <span class="text-xs text-slate-400" id="progress-text">0% تکمیل شده</span>
+            </div>
+            <div class="w-full bg-slate-700 rounded-full h-2">
+                <div id="progress-bar" class="bg-indigo-500 h-2 rounded-full transition-all duration-500 progress-bar-glow" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div id="content-area" class="flex-grow p-6 md:p-10 overflow-y-auto relative">
+            <!-- Dynamic Content Loaded via JS -->
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="p-6 bg-slate-900/50 border-t border-white/5 flex justify-between items-center mt-auto">
+            <button id="prev-btn" onclick="prevStep()" class="px-6 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition-all disabled:opacity-30 disabled:cursor-not-allowed hidden">
+                <i class="fas fa-arrow-right ml-2"></i> قبلی
+            </button>
+            
+            <div class="flex gap-3">
+                <button id="reset-btn" onclick="resetData()" class="px-4 py-3 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all text-sm hidden">
+                    <i class="fas fa-trash"></i>
+                </button>
+                <button id="next-btn" onclick="nextStep()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3 rounded-lg shadow-lg shadow-indigo-500/30 transition-all transform hover:scale-105 font-bold flex items-center">
+                    بعدی <i class="fas fa-arrow-left mr-2"></i>
+                </button>
+                <button id="download-btn" onclick="generateHTML()" class="bg-green-600 hover:bg-green-500 text-white px-8 py-3 rounded-lg shadow-lg shadow-green-500/30 transition-all transform hover:scale-105 font-bold hidden items-center">
+                    دریافت خروجی نهایی <i class="fas fa-download mr-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Contact Footer (Requested Addition) -->
+        <div class="bg-slate-950/50 p-4 border-t border-white/5 text-center">
+            <div class="flex flex-col items-center justify-center space-y-1">
+                <div class="text-indigo-300 font-bold text-sm flex items-center gap-2">
+                    <i class="fas fa-user-tie text-indigo-500"></i>
+                    حسین دادخواه: معمار رشد
+                </div>
+                <a href="tel:09338505002" class="text-slate-500 hover:text-white transition-colors text-sm flex items-center gap-2 dir-ltr font-mono">
+                    0933 850 5002 <i class="fas fa-phone-alt text-xs"></i>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 left-5 bg-emerald-600 text-white px-4 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center">
+        <i class="fas fa-check-circle ml-2"></i>
+        <span>ذخیره شد</span>
+    </div>
+
+    <script>
+        // Data Structure with CORRECTED sequential numbering
+        const slides = [
+            {
+                type: 'intro',
+                title: 'خوش آمدید به اتاق طراحی برند',
+                content: `
+                    <div class="text-center space-y-6 py-8">
+                        <div class="w-20 h-20 bg-indigo-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-fingerprint text-4xl text-indigo-400"></i>
+                        </div>
+                        <h1 class="text-3xl md:text-4xl font-bold text-white leading-tight">پرسشنامه جامع تدوین استراتژی برند</h1>
+                        <p class="text-lg text-slate-300 leading-relaxed">
+                            ببین دوست من، ساختن برند مثل ساختن یک ساختمان نیست که با آجر و سیمان بالا برود؛ مثل پرورش یک <strong>انسان</strong> است. 
+                            ما می‌خواهیم برای کسب‌وکار تو یک «روح» خلق کنیم.
+                        </p>
+                        <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700 text-sm text-slate-400">
+                            <i class="fas fa-heart text-pink-500 ml-2"></i>
+                            لطفاً با صداقت کامل، بدون کلیشه‌های بازاری و با قلبت پاسخ بده.
+                        </div>
+                        <p class="text-xs text-slate-500 mt-4">پاسخ‌های شما به صورت خودکار در این مرورگر ذخیره می‌شوند.</p>
+                    </div>
+                `
+            },
+            // Section 1
+            {
+                type: 'question',
+                section: 'بخش اول: کشف ریشه و باور (چرایی و فلسفه)',
+                id: 'q1',
+                question: '۱. اگر همین فردا کسب‌وکارت برای همیشه تعطیل شود، دنیا (یا مشتریانت) چه چیزی را گم می‌کنند که هیچ‌کسِ دیگر نمی‌تواند جایگزینش کند؟',
+                description: 'این سوال «هدف غایی» تو را نشان می‌دهد. اگر جوابت فقط «یک فروشنده کمتر» باشد، یعنی هنوز برند نشده‌ایم؛ باید بفهمیم چه ارزش منحصربه‌فردی خلق می‌کنی.'
+            },
+            {
+                type: 'question',
+                section: 'بخش اول: کشف ریشه و باور (چرایی و فلسفه)',
+                id: 'q2',
+                question: '۲. فرض کن ۱۰ سال گذشته و تو موفق‌ترین برند در حوزه خودت شده‌ای. تیتر روزنامه‌ها یا استوری‌های مردم درباره تو چه می‌گویند؟',
+                description: 'این سوال «چشم‌انداز» (Vision) تو را ترسیم می‌کند. تصویری شفاف از قله‌ای که می‌خواهیم فتح کنیم تا بدانیم مسیرمان به کدام سمت است.'
+            },
+            {
+                type: 'question',
+                section: 'بخش اول: کشف ریشه و باور (چرایی و فلسفه)',
+                id: 'q3',
+                question: '۳. چه خط قرمزی داری که حتی اگر میلیاردها تومان سود داشته باشد، حاضر نیستی از آن عبور کنی؟',
+                description: 'این سوال «ارزش‌های اصلی» (Values) برند را فاش می‌کند. برند بدون اخلاق و اصول ثابت، مثل بادکنکی است که زود می‌ترکد.'
+            },
+            // Section 2
+            {
+                type: 'question',
+                section: 'بخش دوم: جایگاه و مخاطب (برای چه کسی؟)',
+                intro: 'برندی که بخواهد برای «همه» باشد، برای «هیچ‌کس» نیست.',
+                id: 'q4',
+                question: '۴. اگر بخواهی «مشتری ایده‌آل و عاشق» خودت را به من معرفی کنی، او کیست؟ (اسم، سن، شغل، و مهم‌تر از همه: بزرگ‌ترین نگرانی یا آرزویش چیست؟)',
+                description: 'ما دنبال دموگرافیک خشک نیستیم؛ دنبال روانشناسی مخاطبیم. باید بفهمیم دردش چیست تا تو دوای دردش باشی.'
+            },
+            {
+                type: 'question',
+                section: 'بخش دوم: جایگاه و مخاطب (برای چه کسی؟)',
+                id: 'q5',
+                question: '۵. رقبای تو چه قولی می‌دهند که تو می‌توانی بهترش را انجام دهی، یا چه کاری می‌کنند که تو اصلاً نمی‌خواهی انجام دهی؟',
+                description: 'این سوال «تمایز» (Differentiation) تو را می‌سازد. باید بدانیم در کدام صندلی خالی ذهن مخاطب قرار است بنشینیم.'
+            },
+            {
+                type: 'question',
+                section: 'بخش دوم: جایگاه و مخاطب (برای چه کسی؟)',
+                id: 'q6',
+                question: '۶. بزرگ‌ترین «دشمن» مشتری تو چیست که تو می‌خواهی با شمشیر برندت آن را از بین ببری؟ (مثلاً: اتلاف وقت، کیفیت پایین، گرانی بی‌دلیل، حس ناامنی)',
+                description: 'قهرمان‌ها با دشمنان می‌جنگند. دشمن مشتری را پیدا کن تا تو قهرمان زندگی‌اش شوی.'
+            },
+            // Section 3
+            {
+                type: 'question',
+                section: 'بخش سوم: شخصیت و حس (برند زنده)',
+                intro: 'برند تو یک موجود زنده است. بیاییم به او جان بدهیم.',
+                id: 'q7',
+                question: '۷. اگر برند تو یک «آدم» بود و وارد یک مهمانی می‌شد، چه تیپی می‌زد، چطور حرف می‌زد و دیگران درباره‌اش چه فکری می‌کردند؟ (مثلاً: یک دانشمند جدی، یک رفیق شوخ‌طبع، یا یک مادر دلسوز؟)',
+                description: 'این سوال «آرکتایپ و شخصیت» (Archetype) برند را مشخص می‌کند. لحن تبلیغات و رفتار پرسنل تو باید شبیه این آدم باشد.'
+            },
+            {
+                type: 'question',
+                section: 'بخش سوم: شخصیت و حس (برند زنده)',
+                id: 'q8',
+                question: '۸. دوست داری وقتی مشتری اسم برند تو را می‌شنود، دقیقاً چه «احساسی» در قلبش ایجاد شود؟ (فقط یک یا دو کلمه: مثلاً آرامش، هیجان، اعتماد، قدرت)',
+                description: 'برند یعنی جایگاه عاطفی. تمام رنگ‌ها، لوگو و رفتارهای ما باید طوری طراحی شوند که همین یک کلمه را در دل مخاطب بکارند.'
+            },
+            // Section 4
+            {
+                type: 'question',
+                section: 'بخش چهارم: داستان و فرهنگ (روحِ جاری)',
+                intro: 'مردم کالا نمی‌خرند، داستان می‌خرند.',
+                id: 'q9',
+                question: '۹. چه اتفاق، جرقه یا دردی باعث شد که تصمیم بگیری این کار را شروع کنی؟ (داستان واقعی و صادقانه شروع کار)',
+                description: 'این «داستان پیدایش» (Origin Story) توست. ریشه اصالت برند در همین داستان نهفته است که باعث می‌شود مردم باورت کنند.'
+            },
+            {
+                type: 'question',
+                section: 'بخش چهارم: داستان و فرهنگ (روحِ جاری)',
+                id: 'q10',
+                question: '۱۰. اگر بخواهی یک جمله روی دیوار دفترت بنویسی که کارمندان هر روز با دیدن آن بدانند باید چطور رفتار کنند، آن جمله چیست؟',
+                description: 'این سوال «فرهنگ سازمانی» (Brand Culture) تو را می‌سازد. برند از داخل به بیرون می‌تابد؛ اگر تیمت باور نداشته باشد، مشتری هم باور نمی‌کند.'
+            },
+            // Section 5
+            {
+                type: 'question',
+                section: 'بخش پنجم: وعده برند (قولِ شرف)',
+                intro: 'و در آخر، تعهد تو به دنیا.',
+                id: 'q11',
+                question: '۱۱. قول می‌دهی مشتری بعد از هر بار استفاده از محصول یا خدمات تو، چه تجربه‌ای داشته باشد که «تضمین» می‌کنی همیشه تکرار شود؟',
+                description: 'این «وعده برند» (Brand Promise) است. چیزی که اعتبار تو به آن گره خورده و اگر انجامش ندهی، برند می‌میرد.'
+            },
+            // Section 6 (Differentiation) - Renumbered 12-16
+            {
+                type: 'question',
+                section: 'بخش ششم: تمایز سخت',
+                id: 'q12',
+                question: '۱۲. تستِ مرگ (آگهی ترحیم): اگر خدای نکرده برندت بمیرد، در «آگهی ترحیم» آن چه می‌نویسی؟ چه کسانی به مراسم ختم می‌آیند و دقیقاً چه جمله‌ای در وصف از دست دادن تو می‌گویند؟',
+                description: 'این با چشم‌انداز فرق دارد. این یعنی «اثرِ فقدان». اگر گریه‌کن نداری، یعنی برند نیستی.'
+            },
+            {
+                type: 'question',
+                section: 'بخش ششم: تمایز سخت',
+                id: 'q13',
+                question: '۱۳. فرمولِ انحصار: این جای خالی را پر کن: «ما تنها [دسته‌بندی کسب‌وکارت] هستیم که [خدمت/ارزش خاص] را برای [مشتری خاص] در [مکان جغرافیایی] ارائه می‌دهیم.»',
+                description: 'اگر نتوانی کلمه «تنها» را پر کنی یا رقیبی شبیه تو باشد، در آزمون رد شده‌ای. این جمله باید آنقدر دقیق باشد که هیچ‌کس جز تو نتواند ادعایش کند.'
+            },
+            {
+                type: 'question',
+                section: 'بخش ششم: تمایز سخت',
+                id: 'q14',
+                question: '۱۴. قدرت قیمت‌گذاری: آیا برندت آنقدر جذابیت و تمایز دارد که بتوانی محصولت را گران‌تر از رقبا بفروشی و مشتری همچنان با لبخند از تو بخرد؟ اگر بله، دقیقاً به خاطر کدام ویژگی؟',
+                description: 'برند رهبر، برندی است که حاشیه سودش را خودش تعیین می‌کند، نه بازار. اگر مجبوری تخفیف بدهی، برند نیستی، کالایی.'
+            },
+            {
+                type: 'question',
+                section: 'بخش ششم: تمایز سخت',
+                id: 'q15',
+                question: '۱۵. لیست سیاه و سفید (عناصر همگون و ناهمگون): لیستی از کارهایی که برندت نباید بکند (چون به تصویرش لطمه می‌زند) و کارهایی که باید بکند (تا تصویرش تقویت شود) تهیه کن.',
+                description: 'مثلاً اگر برندی «لوکس» هستی، عنصر ناهمگون تو می‌شود «تخفیف ۵۰ درصدی» یا «استفاده از فونت‌های کودکانه». این لیست خطای دیداری و رفتاری تو را می‌گیرد.'
+            },
+            {
+                type: 'question',
+                section: 'بخش ششم: تمایز سخت',
+                id: 'q16',
+                question: '۱۶. ممیزی بصری رقبا: یک جدول (ذهنی یا روی کاغذ) بکش و لوگو، رنگ سازمانی و شعار ۵ رقیب اصلی‌ات را کنار هم بگذار. تو کجای این رنگین‌کمان قرار می‌گیری که «گم» نشوی؟',
+                description: 'اگر همه رقبا آبی هستند و تو هم آبی باشی، دیده نمی‌شوی. این سوال برای طراحی هویت بصری (Visual Identity) حیاتی است.'
+            },
+            // Supplementary Questions - Renumbered 17-20
+            {
+                type: 'question',
+                section: 'سوالات تکمیلی (تزریق روح و کاریزما به برند شخصی)',
+                intro: 'رهبران بازار فقط با مهارت فنی رهبر نمی‌شوند؛ با «قصه» و «سبک» رهبر می‌شوند.',
+                id: 'q17',
+                question: '۱۷. داستانِ «نقطه‌ی عطف» شما چیست؟ (چرا اینجایید؟) چه اتفاق تلخ، شکست بزرگ، یا جرقه خاصی در زندگی‌تان افتاد که باعث شد این مسیر شغلی را انتخاب کنید؟',
+                description: 'در سوال ۱ گفتی چه مشکلی را حل می‌کنی، اما نگفتی چرا؟ مردم با «چرایی» تو ارتباط دلی برقرار می‌کنند، نه با «کد زدن» تو.'
+            },
+            {
+                type: 'question',
+                section: 'سوالات تکمیلی (تزریق روح و کاریزما به برند شخصی)',
+                id: 'q18',
+                question: '۱۸. «امضای» شما چیست؟ (Visual & Verbal Signature) اگر اسم و عکس شما را از روی محتوا یا محصولتان برداریم، مخاطب از کجا باید بفهمد که این کارِ شماست؟',
+                description: 'این یعنی هویت حسی. باید یک «موتیف» یا نشانه داشته باشید که در ذهن مخاطب هک شود (تکیه کلام خاص؟ رنگ خاص؟ سبک شوخی خاص؟).'
+            },
+            {
+                type: 'question',
+                section: 'سوالات تکمیلی (تزریق روح و کاریزما به برند شخصی)',
+                id: 'q19',
+                question: '۱۹. قبیله شما کیست؟ دوست دارید در اکوسیستم کاری‌تان، نام شما کنار نام چه بزرگان یا برندهایی بیاید؟ و برعکس، کنار چه کسانی هرگز نباید دیده شوید؟',
+                description: 'برندسازی یعنی «مدیریت تداعیات». هم‌نشینی با برندهای لوکس، شما را لوکس می‌کند؛ هم‌نشینی با برندهای زرد، شما را زرد می‌کند.'
+            },
+            {
+                type: 'question',
+                section: 'سوالات تکمیلی (تزریق روح و کاریزما به برند شخصی)',
+                id: 'q20',
+                question: '۲۰. رسانه و تریبون اصلی شما کجاست؟ اگر فقط حق داشته باشید در یک پلتفرم یا روش ارتباطی صحبت کنید، کدام را انتخاب می‌کنید که با شخصیت ذاتی‌تان سازگارتر است؟',
+                description: 'انتخاب غلط رسانه، انرژی برند را می‌گیرد. اگر درون‌گرایید، شاید نوشتن (بلاگ/لینکدین) بهتر از ویدیو (اینستاگرام/یوتیوب) باشد.'
+            },
+            // Psychological / Fun - Renumbered 21-24
+            {
+                type: 'question',
+                section: 'بخش روانشناسی و عمق شخصیت',
+                id: 'q21',
+                question: '۲۱. با کدام شخصیت (ایرانی یا خارجی) بیشترین همزادپنداری را دارید و همیشه دلتان می‌خواست جای او باشید؟',
+                description: 'پاسخ به این سوال، الگوهای ناخودآگاه برند شما را آشکار می‌کند.'
+            },
+            {
+                type: 'question',
+                section: 'بخش روانشناسی و عمق شخصیت',
+                id: 'q22',
+                question: '۲۲. وقتی در کار یک بحران ناگهانی پیش می‌آید، واکنش غریزی شما چیست؟',
+                description: 'دستور می‌دهید؟ شوخی می‌کنید تا فضا آرام شود؟ سکوت می‌کنید و فکر می‌کنید؟ یا سپر بلای بقیه می‌شوید؟'
+            },
+            {
+                type: 'question',
+                section: 'بخش روانشناسی و عمق شخصیت',
+                id: 'q23',
+                question: '۲۳. بدترین برچسب یا صفتی که اگر به برند شما نسبت بدهند، دیوانه می‌شوید چیست؟',
+                description: 'مثلاً: اگر بگویند «دروغگو» بدتر است یا بگویند «دمده و قدیمی»؟ این خط قرمزهای احساسی برند است.'
+            },
+            {
+                type: 'question',
+                section: 'بخش روانشناسی و عمق شخصیت',
+                id: 'q24',
+                question: '۲۴. دوست دارید مشتری وقتی محصول شما را استفاده می‌کند، نسبت به «خودش» چه حسی پیدا کند؟',
+                description: 'حس کند باهوش‌تر شده؟ جذاب‌تر شده؟ یا قدرتمندتر؟ و…'
+            },
+            // End Slide
+            {
+                type: 'end',
+                title: 'سفر به پایان رسید!',
+                content: `
+                    <div class="text-center py-8 space-y-6">
+                        <div class="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto animate-pulse">
+                            <i class="fas fa-check text-5xl text-green-400"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-white">تبریک می‌گویم!</h2>
+                        <p class="text-slate-300 text-lg px-4">
+                            شما اکنون یک نقشه راه اولیه برای روح برند خود دارید. 
+                            با زدن دکمه زیر، تمام پاسخ‌های خود را در یک فایل شکیل دریافت کنید و آن را به عنوان کتابچه برند خود نگه دارید.
+                        </p>
+                        <div class="bg-indigo-900/40 p-6 rounded-lg border border-indigo-500/30 mx-4 text-right">
+                            <h4 class="font-bold text-indigo-300 mb-2"><i class="fas fa-lightbulb ml-2"></i>پیشنهاد بعدی:</h4>
+                            <p class="text-slate-400 text-sm">این پاسخ‌ها را پرینت بگیرید و روی دیوار اتاق کارتان نصب کنید. هر تصمیمی که می‌گیرید، باید با این پاسخ‌ها همخوانی داشته باشد.</p>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+        let currentStep = 0;
+        let answers = {};
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAnswers();
+            renderStep();
+        });
+
+        function loadAnswers() {
+            const saved = localStorage.getItem('brand_answers');
+            if (saved) {
+                answers = JSON.parse(saved);
+            }
+        }
+
+        function saveAnswer(id, value) {
+            answers[id] = value;
+            localStorage.setItem('brand_answers', JSON.stringify(answers));
+            
+            // Show auto-save toast
+            const toast = document.getElementById('toast');
+            toast.classList.remove('opacity-0', 'translate-y-20');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-20');
+            }, 2000);
+        }
+
+        function resetData() {
+            if(confirm('آیا مطمئن هستید؟ تمام پاسخ‌های شما پاک خواهد شد.')) {
+                localStorage.removeItem('brand_answers');
+                answers = {};
+                currentStep = 0;
+                renderStep();
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < slides.length - 1) {
+                currentStep++;
+                renderStep();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                renderStep();
+            }
+        }
+
+        function renderStep() {
+            const container = document.getElementById('content-area');
+            const slide = slides[currentStep];
+            
+            // Update Buttons
+            document.getElementById('prev-btn').classList.toggle('hidden', currentStep === 0);
+            
+            const nextBtn = document.getElementById('next-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            
+            if (currentStep === slides.length - 1) {
+                nextBtn.classList.add('hidden');
+                downloadBtn.classList.remove('hidden');
+                downloadBtn.classList.add('flex');
+            } else {
+                nextBtn.classList.remove('hidden');
+                downloadBtn.classList.add('hidden');
+                downloadBtn.classList.remove('flex');
+            }
+
+            // Show Reset button only after intro
+            document.getElementById('reset-btn').classList.toggle('hidden', currentStep === 0);
+
+            // Progress Bar
+            const progress = Math.round((currentStep / (slides.length - 1)) * 100);
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-text').textContent = `${progress}% تکمیل شده`;
+
+            // Render Content
+            container.innerHTML = '';
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = 'fade-in-up w-full h-full flex flex-col';
+
+            if (slide.type === 'intro' || slide.type === 'end') {
+                wrapper.innerHTML = slide.content;
+            } else {
+                // Question Slide
+                const val = answers[slide.id] || '';
+                
+                let introHtml = slide.intro ? `<div class="mb-6 p-4 bg-blue-900/20 border-r-4 border-blue-500 rounded text-blue-200 italic text-sm">${slide.intro}</div>` : '';
+
+                wrapper.innerHTML = `
+                    <div class="mb-2">
+                        <span class="text-indigo-400 text-xs font-bold tracking-wider uppercase bg-indigo-900/30 px-2 py-1 rounded">${slide.section}</span>
+                    </div>
+                    ${introHtml}
+                    <h3 class="text-xl md:text-2xl font-bold text-white mb-4 leading-snug">${slide.question}</h3>
+                    
+                    <div class="bg-slate-800/50 p-4 rounded-lg mb-6 border border-slate-700">
+                        <p class="text-slate-400 text-sm leading-relaxed"><i class="fas fa-info-circle ml-2 text-slate-500"></i>${slide.description}</p>
+                    </div>
+
+                    <div class="flex-grow flex flex-col">
+                        <label class="text-sm text-slate-300 mb-2">پاسخ شما:</label>
+                        <textarea 
+                            oninput="saveAnswer('${slide.id}', this.value)"
+                            class="w-full flex-grow bg-slate-900 border border-slate-600 rounded-xl p-4 text-white placeholder-slate-600 focus:outline-none input-focus-effect transition-all resize-none text-lg leading-relaxed h-48 md:h-auto"
+                            placeholder="اینجا بنویسید..."
+                        >${val}</textarea>
+                    </div>
+                `;
+            }
+
+            container.appendChild(wrapper);
+        }
+
+        function generateHTML() {
+            let qaContent = '';
+            
+            slides.forEach(slide => {
+                if (slide.type === 'question') {
+                    const answer = answers[slide.id] || '--- بدون پاسخ ---';
+                    qaContent += `
+                        <div class="qa-box">
+                            <div class="section-badge">${slide.section}</div>
+                            <div class="question">${slide.question}</div>
+                            <div class="description">${slide.description}</div>
+                            <div class="answer-label">پاسخ شما:</div>
+                            <div class="answer">${answer.replace(/\n/g, '<br>')}</div>
+                        </div>
+                    `;
+                }
+            });
+
+            const finalHTML = `
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>سند استراتژی برند | حسین دادخواه</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Vazirmatn', sans-serif; background: #f0f2f5; color: #333; padding: 40px; line-height: 1.8; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        h1 { text-align: center; color: #1e1b4b; margin-bottom: 10px; font-size: 28px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
+        .meta { text-align: center; color: #666; font-size: 14px; margin-bottom: 40px; }
+        .qa-box { margin-bottom: 40px; page-break-inside: avoid; border-bottom: 1px dashed #eee; padding-bottom: 30px; }
+        .section-badge { display: inline-block; background: #e0e7ff; color: #4338ca; padding: 4px 12px; border-radius: 20px; font-size: 12px; margin-bottom: 10px; font-weight: bold; }
+        .question { font-size: 18px; font-weight: bold; color: #111; margin-bottom: 10px; }
+        .description { font-size: 13px; color: #666; font-style: italic; margin-bottom: 15px; background: #fafafa; padding: 10px; border-right: 3px solid #ddd; }
+        .answer-label { font-size: 12px; color: #888; margin-bottom: 5px; }
+        .answer { background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; color: #334155; white-space: pre-wrap; font-size: 16px; }
+        .footer { text-align: center; margin-top: 50px; padding-top: 20px; border-top: 2px solid #eee; color: #555; font-size: 14px; }
+        @media print { body { background: white; padding: 0; } .container { box-shadow: none; padding: 20px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>سند هویت و استراتژی برند</h1>
+        <div class="meta">تولید شده در تاریخ: ${new Date().toLocaleDateString('fa-IR')}</div>
+        ${qaContent}
+        <div class="footer">
+            <p><strong>حسین دادخواه: معمار رشد</strong></p>
+            <p dir="ltr">0933 850 5002</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+            const blob = new Blob([finalHTML], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Brand_Strategy_Document.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+</html>
