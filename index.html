@@ -64,6 +64,29 @@
             direction: ltr;
             unicode-bidi: embed;
         }
+
+        /* Mobile Adjustments for Buttons */
+        @media (max-width: 640px) {
+            .nav-buttons-container {
+                flex-direction: column-reverse;
+                gap: 1rem;
+            }
+            .nav-actions-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .prev-btn-wrapper {
+                width: 100%;
+            }
+            #prev-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen p-4">
@@ -93,26 +116,36 @@
             <!-- Dynamic Content Loaded via JS -->
         </div>
 
-        <!-- Navigation Buttons -->
-        <div class="p-6 bg-slate-900/50 border-t border-white/5 flex justify-between items-center mt-auto">
-            <button id="prev-btn" onclick="prevStep()" class="px-6 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition-all disabled:opacity-30 disabled:cursor-not-allowed hidden">
-                <i class="fas fa-arrow-right ml-2"></i> قبلی
-            </button>
-            
-            <div class="flex gap-3">
-                <button id="reset-btn" onclick="resetData()" class="px-4 py-3 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all text-sm hidden">
-                    <i class="fas fa-trash"></i>
-                </button>
-                <button id="next-btn" onclick="nextStep()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3 rounded-lg shadow-lg shadow-indigo-500/30 transition-all transform hover:scale-105 font-bold flex items-center">
-                    بعدی <i class="fas fa-arrow-left mr-2"></i>
-                </button>
-                <button id="download-btn" onclick="generateHTML()" class="bg-green-600 hover:bg-green-500 text-white px-8 py-3 rounded-lg shadow-lg shadow-green-500/30 transition-all transform hover:scale-105 font-bold hidden items-center">
-                    دریافت خروجی نهایی <i class="fas fa-download mr-2"></i>
-                </button>
+        <!-- Navigation Buttons (Responsive Fixed) -->
+        <div class="p-6 bg-slate-900/50 border-t border-white/5 mt-auto">
+            <div class="nav-buttons-container flex justify-between items-center">
+                
+                <!-- Previous Button Wrapper -->
+                <div class="prev-btn-wrapper">
+                    <button id="prev-btn" onclick="prevStep()" class="px-6 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition-all disabled:opacity-30 disabled:cursor-not-allowed hidden flex items-center gap-2">
+                        <i class="fas fa-arrow-right"></i> قبلی
+                    </button>
+                </div>
+                
+                <!-- Action Buttons Wrapper -->
+                <div class="nav-actions-group flex gap-3 items-center">
+                    <button id="reset-btn" onclick="resetData()" class="px-4 py-3 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all text-sm hidden" title="پاک کردن فرم">
+                        <i class="fas fa-trash"></i>
+                    </button>
+
+                    <button id="next-btn" onclick="nextStep()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-3 rounded-lg shadow-lg shadow-indigo-500/30 transition-all transform hover:scale-105 font-bold flex items-center justify-center action-btn">
+                        بعدی <i class="fas fa-arrow-left mr-2"></i>
+                    </button>
+
+                    <button id="download-btn" onclick="generateHTML()" class="bg-green-600 hover:bg-green-500 text-white px-8 py-3 rounded-lg shadow-lg shadow-green-500/30 transition-all transform hover:scale-105 font-bold hidden items-center justify-center action-btn w-full md:w-auto">
+                        دریافت خروجی نهایی <i class="fas fa-download mr-2"></i>
+                    </button>
+                </div>
+
             </div>
         </div>
 
-        <!-- Contact Footer (Requested Addition) -->
+        <!-- Contact Footer -->
         <div class="bg-slate-950/50 p-4 border-t border-white/5 text-center">
             <div class="flex flex-col items-center justify-center space-y-1">
                 <div class="text-indigo-300 font-bold text-sm flex items-center gap-2">
@@ -134,7 +167,7 @@
     </div>
 
     <script>
-        // Data Structure with CORRECTED sequential numbering
+        // Data Structure
         const slides = [
             {
                 type: 'intro',
@@ -243,7 +276,7 @@
                 question: '۱۱. قول می‌دهی مشتری بعد از هر بار استفاده از محصول یا خدمات تو، چه تجربه‌ای داشته باشد که «تضمین» می‌کنی همیشه تکرار شود؟',
                 description: 'این «وعده برند» (Brand Promise) است. چیزی که اعتبار تو به آن گره خورده و اگر انجامش ندهی، برند می‌میرد.'
             },
-            // Section 6 (Differentiation) - Renumbered 12-16
+            // Section 6
             {
                 type: 'question',
                 section: 'بخش ششم: تمایز سخت',
@@ -279,7 +312,7 @@
                 question: '۱۶. ممیزی بصری رقبا: یک جدول (ذهنی یا روی کاغذ) بکش و لوگو، رنگ سازمانی و شعار ۵ رقیب اصلی‌ات را کنار هم بگذار. تو کجای این رنگین‌کمان قرار می‌گیری که «گم» نشوی؟',
                 description: 'اگر همه رقبا آبی هستند و تو هم آبی باشی، دیده نمی‌شوی. این سوال برای طراحی هویت بصری (Visual Identity) حیاتی است.'
             },
-            // Supplementary Questions - Renumbered 17-20
+            // Supplementary
             {
                 type: 'question',
                 section: 'سوالات تکمیلی (تزریق روح و کاریزما به برند شخصی)',
@@ -309,7 +342,7 @@
                 question: '۲۰. رسانه و تریبون اصلی شما کجاست؟ اگر فقط حق داشته باشید در یک پلتفرم یا روش ارتباطی صحبت کنید، کدام را انتخاب می‌کنید که با شخصیت ذاتی‌تان سازگارتر است؟',
                 description: 'انتخاب غلط رسانه، انرژی برند را می‌گیرد. اگر درون‌گرایید، شاید نوشتن (بلاگ/لینکدین) بهتر از ویدیو (اینستاگرام/یوتیوب) باشد.'
             },
-            // Psychological / Fun - Renumbered 21-24
+            // Psychological
             {
                 type: 'question',
                 section: 'بخش روانشناسی و عمق شخصیت',
@@ -371,9 +404,13 @@
         });
 
         function loadAnswers() {
-            const saved = localStorage.getItem('brand_answers');
-            if (saved) {
-                answers = JSON.parse(saved);
+            try {
+                const saved = localStorage.getItem('brand_answers');
+                if (saved) {
+                    answers = JSON.parse(saved);
+                }
+            } catch (e) {
+                console.error("Error loading answers", e);
             }
         }
 
@@ -416,24 +453,42 @@
             const container = document.getElementById('content-area');
             const slide = slides[currentStep];
             
-            // Update Buttons
-            document.getElementById('prev-btn').classList.toggle('hidden', currentStep === 0);
+            // Toggle Previous Button
+            const prevBtn = document.getElementById('prev-btn');
+            if (currentStep === 0) {
+                prevBtn.classList.add('hidden');
+                prevBtn.classList.remove('flex');
+            } else {
+                prevBtn.classList.remove('hidden');
+                prevBtn.classList.add('flex');
+            }
             
             const nextBtn = document.getElementById('next-btn');
             const downloadBtn = document.getElementById('download-btn');
             
             if (currentStep === slides.length - 1) {
+                // End Slide
                 nextBtn.classList.add('hidden');
+                nextBtn.classList.remove('flex');
+                
                 downloadBtn.classList.remove('hidden');
                 downloadBtn.classList.add('flex');
             } else {
+                // Normal Slide
                 nextBtn.classList.remove('hidden');
+                nextBtn.classList.add('flex');
+                
                 downloadBtn.classList.add('hidden');
                 downloadBtn.classList.remove('flex');
             }
 
             // Show Reset button only after intro
-            document.getElementById('reset-btn').classList.toggle('hidden', currentStep === 0);
+            const resetBtn = document.getElementById('reset-btn');
+            if (currentStep === 0) {
+                resetBtn.classList.add('hidden');
+            } else {
+                resetBtn.classList.remove('hidden');
+            }
 
             // Progress Bar
             const progress = Math.round((currentStep / (slides.length - 1)) * 100);
@@ -479,29 +534,44 @@
             container.appendChild(wrapper);
         }
 
+        // Fixed HTML Generation
         function generateHTML() {
             let qaContent = '';
             
+            // Robust loop to handle missing data or ids
             slides.forEach(slide => {
-                if (slide.type === 'question') {
-                    const answer = answers[slide.id] || '--- بدون پاسخ ---';
+                if (slide.type === 'question' && slide.id) {
+                    // Safe access to answer
+                    let answerRaw = answers[slide.id];
+                    if (!answerRaw) answerRaw = '--- بدون پاسخ ---';
+                    
+                    // Escape basic HTML to prevent breakage
+                    const answerSafe = answerRaw.replace(/&/g, "&amp;")
+                                        .replace(/</g, "&lt;")
+                                        .replace(/>/g, "&gt;")
+                                        .replace(/"/g, "&quot;")
+                                        .replace(/'/g, "&#039;")
+                                        .replace(/\n/g, '<br>');
+
                     qaContent += `
                         <div class="qa-box">
                             <div class="section-badge">${slide.section}</div>
                             <div class="question">${slide.question}</div>
                             <div class="description">${slide.description}</div>
                             <div class="answer-label">پاسخ شما:</div>
-                            <div class="answer">${answer.replace(/\n/g, '<br>')}</div>
+                            <div class="answer">${answerSafe}</div>
                         </div>
                     `;
                 }
             });
 
+            // Construct full HTML string
             const finalHTML = `
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سند استراتژی برند | حسین دادخواه</title>
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
     <style>
@@ -532,14 +602,22 @@
 </body>
 </html>`;
 
-            const blob = new Blob([finalHTML], { type: 'text/html' });
+            // Create Blob with Explicit UTF-8 Charset
+            const blob = new Blob([finalHTML], { type: 'text/html;charset=utf-8' });
             const url = URL.createObjectURL(blob);
+            
+            // Create temporary link and trigger download
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'Brand_Strategy_Document.html';
+            a.download = `Brand_Strategy_Document_${new Date().toISOString().slice(0,10)}.html`;
             document.body.appendChild(a);
             a.click();
-            document.body.removeChild(a);
+            
+            // Cleanup
+            setTimeout(() => {
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            }, 100);
         }
     </script>
 </body>
