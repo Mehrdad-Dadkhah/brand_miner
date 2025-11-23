@@ -74,10 +74,13 @@
             .nav-actions-group {
                 width: 100%;
                 justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 10px;
             }
             .action-btn {
-                width: 100%;
+                flex-grow: 1;
                 justify-content: center;
+                min-width: 45%; /* Allows 2 buttons per row if space permits */
             }
             .prev-btn-wrapper {
                 width: 100%;
@@ -137,12 +140,20 @@
                         بعدی <i class="fas fa-arrow-left mr-2"></i>
                     </button>
 
-                    <button id="download-btn" onclick="generateHTML()" class="bg-green-600 hover:bg-green-500 text-white px-8 py-3 rounded-lg shadow-lg shadow-green-500/30 transition-all transform hover:scale-105 font-bold hidden items-center justify-center action-btn w-full md:w-auto">
-                        دریافت خروجی نهایی <i class="fas fa-download mr-2"></i>
+                    <!-- New Download Buttons -->
+                    <button id="download-txt-btn" onclick="generateTXT()" class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-3 rounded-lg shadow-lg shadow-slate-500/30 transition-all transform hover:scale-105 font-bold hidden items-center justify-center action-btn md:w-auto text-sm">
+                        <i class="fas fa-file-alt mr-2"></i> دانلود متن (TXT)
+                    </button>
+
+                    <button id="download-html-btn" onclick="generateHTML()" class="bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg shadow-green-500/30 transition-all transform hover:scale-105 font-bold hidden items-center justify-center action-btn md:w-auto text-sm">
+                        <i class="fas fa-file-code mr-2"></i> دانلود اصلی (HTML)
                     </button>
                 </div>
 
             </div>
+            
+            <!-- Download Links Container (New) -->
+            <div id="download-links-area" class="w-full mt-4 flex flex-col gap-2 hidden"></div>
         </div>
 
         <!-- Contact Footer -->
@@ -432,6 +443,10 @@
                 answers = {};
                 currentStep = 0;
                 renderStep();
+                
+                // Clear download links on reset
+                document.getElementById('download-links-area').innerHTML = '';
+                document.getElementById('download-links-area').classList.add('hidden');
             }
         }
 
@@ -464,22 +479,29 @@
             }
             
             const nextBtn = document.getElementById('next-btn');
-            const downloadBtn = document.getElementById('download-btn');
+            const downloadHtmlBtn = document.getElementById('download-html-btn');
+            const downloadTxtBtn = document.getElementById('download-txt-btn');
             
             if (currentStep === slides.length - 1) {
                 // End Slide
                 nextBtn.classList.add('hidden');
                 nextBtn.classList.remove('flex');
                 
-                downloadBtn.classList.remove('hidden');
-                downloadBtn.classList.add('flex');
+                downloadHtmlBtn.classList.remove('hidden');
+                downloadHtmlBtn.classList.add('flex');
+
+                downloadTxtBtn.classList.remove('hidden');
+                downloadTxtBtn.classList.add('flex');
             } else {
                 // Normal Slide
                 nextBtn.classList.remove('hidden');
                 nextBtn.classList.add('flex');
                 
-                downloadBtn.classList.add('hidden');
-                downloadBtn.classList.remove('flex');
+                downloadHtmlBtn.classList.add('hidden');
+                downloadHtmlBtn.classList.remove('flex');
+
+                downloadTxtBtn.classList.add('hidden');
+                downloadTxtBtn.classList.remove('flex');
             }
 
             // Show Reset button only after intro
@@ -534,18 +556,94 @@
             container.appendChild(wrapper);
         }
 
-        // Fixed HTML Generation
+        // Helper function to trigger download and show link
+        function triggerDownload(content, filename, mimeType, typeLabel, iconClass, borderColorClass) {
+            // Create Blob (add BOM for UTF-8 text compatibility in Windows)
+            const blobContent = mimeType.includes('text/plain') ? '\uFEFF' + content : content;
+            const blob = new Blob([blobContent], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            
+            // Auto Trigger Download
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            
+            // Programmatic click with fallback
+            try {
+                a.click();
+            } catch (err) {
+                console.warn('Auto-download blocked, user can use the link below.');
+            }
+            
+            // Cleanup anchor but KEEP URL valid for the visible link
+            setTimeout(() => {
+                document.body.removeChild(a);
+                // URL.revokeObjectURL(url); // We do NOT revoke so the link below works
+            }, 100);
+
+            // Show persistent download link in UI
+            const linksArea = document.getElementById('download-links-area');
+            linksArea.classList.remove('hidden');
+
+            const linkBox = document.createElement('div');
+            linkBox.className = `flex items-center justify-between p-3 rounded-lg border ${borderColorClass} bg-slate-900/90 mb-2 fade-in-up shadow-lg`;
+            linkBox.innerHTML = `
+                <div class="flex items-center gap-3 overflow-hidden">
+                    <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center flex-shrink-0">
+                        <i class="${iconClass} text-slate-300"></i>
+                    </div>
+                    <div class="flex flex-col min-w-0">
+                        <span class="text-xs text-slate-400">فایل آماده شد:</span>
+                        <span class="text-sm text-white font-bold truncate dir-ltr text-right">${filename}</span>
+                    </div>
+                </div>
+                <a href="${url}" download="${filename}" class="flex-shrink-0 text-xs px-3 py-2 rounded bg-indigo-600 hover:bg-indigo-500 text-white transition-colors ml-2 font-bold">
+                    <i class="fas fa-download mr-1"></i> دریافت
+                </a>
+            `;
+            
+            // Insert at top
+            linksArea.insertBefore(linkBox, linksArea.firstChild);
+        }
+
+        function generateTXT() {
+            let txtContent = 'سند استراتژی برند | حسین دادخواه\n';
+            txtContent += `تاریخ تولید: ${new Date().toLocaleDateString('fa-IR')}\n`;
+            txtContent += '=====================================\n\n';
+
+            slides.forEach(slide => {
+                if (slide.type === 'question' && slide.id) {
+                    let answer = answers[slide.id] || '--- بدون پاسخ ---';
+                    txtContent += `■ ${slide.section}\n`;
+                    txtContent += `سوال: ${slide.question}\n`;
+                    txtContent += `توضیح: ${slide.description}\n`;
+                    txtContent += `>>> پاسخ شما:\n${answer}\n`;
+                    txtContent += '-------------------------------------\n\n';
+                }
+            });
+            
+            txtContent += '\nپایان سند.\nحسین دادخواه: معمار رشد | 09338505002';
+
+            triggerDownload(
+                txtContent, 
+                `Brand_Strategy_${new Date().toISOString().slice(0,10)}.txt`, 
+                'text/plain;charset=utf-8', 
+                'متن (TXT)', 
+                'fas fa-file-alt', 
+                'border-slate-500'
+            );
+        }
+
         function generateHTML() {
             let qaContent = '';
             
-            // Robust loop to handle missing data or ids
             slides.forEach(slide => {
                 if (slide.type === 'question' && slide.id) {
-                    // Safe access to answer
                     let answerRaw = answers[slide.id];
                     if (!answerRaw) answerRaw = '--- بدون پاسخ ---';
                     
-                    // Escape basic HTML to prevent breakage
                     const answerSafe = answerRaw.replace(/&/g, "&amp;")
                                         .replace(/</g, "&lt;")
                                         .replace(/>/g, "&gt;")
@@ -565,7 +663,6 @@
                 }
             });
 
-            // Construct full HTML string
             const finalHTML = `
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -602,22 +699,14 @@
 </body>
 </html>`;
 
-            // Create Blob with Explicit UTF-8 Charset
-            const blob = new Blob([finalHTML], { type: 'text/html;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            
-            // Create temporary link and trigger download
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Brand_Strategy_Document_${new Date().toISOString().slice(0,10)}.html`;
-            document.body.appendChild(a);
-            a.click();
-            
-            // Cleanup
-            setTimeout(() => {
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
-            }, 100);
+            triggerDownload(
+                finalHTML, 
+                `Brand_Strategy_Document_${new Date().toISOString().slice(0,10)}.html`, 
+                'text/html;charset=utf-8', 
+                'HTML اصلی', 
+                'fas fa-code', 
+                'border-green-600'
+            );
         }
     </script>
 </body>
