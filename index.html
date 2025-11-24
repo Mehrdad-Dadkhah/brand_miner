@@ -571,17 +571,21 @@
             document.body.appendChild(a);
             
             // Programmatic click with fallback
-            try {
-                a.click();
-            } catch (err) {
-                console.warn('Auto-download blocked, user can use the link below.');
-            }
-            
+            // Delay slightly for mobile browser context switch
+            setTimeout(() => {
+                 try {
+                    a.click();
+                } catch (err) {
+                    console.warn('Auto-download blocked, user can use the link below.');
+                }
+            }, 100);
+
             // Cleanup anchor but KEEP URL valid for the visible link
+            // CRITICAL FIX: DO NOT REVOKE URL IMMEDIATELY FOR MOBILE
             setTimeout(() => {
                 document.body.removeChild(a);
-                // URL.revokeObjectURL(url); // We do NOT revoke so the link below works
-            }, 100);
+                // window.URL.revokeObjectURL(url); // REMOVED to fix mobile issue
+            }, 1000);
 
             // Show persistent download link in UI
             const linksArea = document.getElementById('download-links-area');
